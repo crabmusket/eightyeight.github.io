@@ -24,7 +24,7 @@ A concept I'll be referring to a lot in this post is the idea of computing on _t
 This is sort of the idea of the `Functor` typeclass, and its function `fmap`.
 If you're not familiar with `fmap`, here's a lightning-fast introduction:
 
-Think of a `Maybe Int` as a box that might contain and `Int` and might not.
+Think of a `Maybe Int` as a box that might contain an `Int` and might not.
 `fmap` turns a regular function into a function that looks inside the box first, and doesn't try to apply itself if the box is empty.
 So while we can't do this:
 
