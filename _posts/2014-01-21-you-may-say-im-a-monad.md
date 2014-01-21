@@ -146,8 +146,10 @@ We've just done the same sort of thing as we did with monads - let the definitio
 `pure` is a lot like `fmap` - it turns `add` into a function that can operate on things in boxes.
 Then `<*>` is used to apply arguments to this new box-aware function.
 
-And because lifting functions with `pure` is so common, they even defined a special operator for it!
-It's called `<$>` to mirror the function application operator you're used to in regular pure Haskell, `$`:
+I'll tell you the truth - you don't often see `pure` in the wild.
+Usually you see its cousin, `<$>`, a fynonym for `fmap` that we can use in this situation
+It's called `<$>` to mirror the function application operator you're used to in regular pure Haskell, `$`.
+And it works like this:
 
     import Control.Applicative ((<$>), (<*>))
 	 z = add <$> x <*> y
