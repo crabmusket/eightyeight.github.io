@@ -147,7 +147,7 @@ We've just done the same sort of thing as we did with monads - let the definitio
 Then `<*>` is used to apply arguments to this new box-aware function.
 
 I'll tell you the truth - you don't often see `pure` in the wild.
-Usually you see its cousin, `<$>`, a fynonym for `fmap` that we can use in this situation
+Usually you see its cousin, `<$>`, a synonym for `fmap` that we can use in this situation
 It's called `<$>` to mirror the function application operator you're used to in regular pure Haskell, `$`.
 And it works like this:
 
