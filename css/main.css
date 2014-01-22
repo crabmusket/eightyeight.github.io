@@ -20,13 +20,14 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-size: 100%; }
+  font-size: 100%;
+}
 
 h1 { margin-bottom: 1em; }
-p { margin: 1em 0; }
+p  { margin: 1em 0; }
 
-a         { color: #a00; text-decoration: none; }
-a:hover   { color: #000; }
+a       { color: #a00; text-decoration: none; }
+a:hover { color: #000; }
 
 table {
   font-size: inherit;
@@ -52,6 +53,7 @@ ul.posts span {
   font-family: Monaco, "Courier New", monospace;
   font-size: 80%;
   font-weight: normal;
+  margin-right: 0.75em;
 }
 
 /*****************************************************************************/
@@ -109,7 +111,7 @@ ul.posts span {
   font-size: 80%;
   color: #666;
   border-top: 4px solid #eee;
-  margin-top: 2em;
+  margin-top: 1em;
   overflow: hidden;
 }
 
@@ -137,6 +139,10 @@ ul.posts span {
 h2.post-title {
   display: inline-block;
   margin: 1em 0;
+}
+
+#post {
+  margin-bottom: 0.5em;
 }
 
 /* standard */
