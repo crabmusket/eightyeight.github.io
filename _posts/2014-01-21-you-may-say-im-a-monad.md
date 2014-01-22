@@ -2,7 +2,7 @@
 layout: post
 title:  "IO: You may say I'm a monad, but I'm not the only one!"
 date:   2014-01-21 03:13
-tags: haskell tutorials programming
+tags:   haskell tutorials programming
 ---
 
 One of the things I love about Haskell is its tools for abstracting computation.
@@ -171,7 +171,8 @@ Which, like `fmap` and like `pure`, we can think of as creating a new function, 
 
 Many people use `fmap` in preference to `liftM` as it doesn't require an import (and almost all `Monad`s are `Functors`), but there's no standard `fmap2` or higher orders defined (though you could easily do so yourself).
 They can do this because most types that are `Monad`s are also `Functor`s.
-In fact, mathematically they're equivalent - it's just that not all types have an instance of both typeclasses.
+In fact, mathematically they're related - it's just that not all types have an instance of both typeclasses.
+(If you want to know - monads are a subset of the functors.)
 
 ## Moving swiftly onwards
 
