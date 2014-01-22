@@ -25,9 +25,8 @@ h1, h2, h3, h4, h5, h6 {
 h1 { margin-bottom: 1em; }
 p { margin: 1em 0; }
 
-a         { color: #00a; }
+a         { color: #a00; text-decoration: none; }
 a:hover   { color: #000; }
-a:visited { color: #a0a; }
 
 table {
   font-size: inherit;
@@ -41,7 +40,7 @@ table {
 /*****************************************************************************/
 ul.posts {
   list-style-type: none;
-  margin-bottom: 2em;
+  margin: 1em 0;
 }
 
 ul.posts li {
@@ -49,9 +48,10 @@ ul.posts li {
 }
 
 ul.posts span {
-  color: #aaa;
+  color: #666;
   font-family: Monaco, "Courier New", monospace;
   font-size: 80%;
+  font-weight: normal;
 }
 
 /*****************************************************************************/
@@ -68,6 +68,10 @@ ul.posts span {
   line-height: 1.5em;
 }
 
+.site .header {
+  border-bottom: 4px solid #eee;
+}
+
 .site .header a {
   font-weight: bold;
   text-decoration: none;
@@ -75,7 +79,7 @@ ul.posts span {
 
 .site .header h1.title {
   display: inline-block;
-  margin-bottom: 2em;
+  margin-bottom: 1em;
 }
 
 .site .header h1.title a {
@@ -96,7 +100,9 @@ ul.posts span {
 }
 
 .site .meta {
-  color: #aaa;
+  color: #666;
+  display: inline-block;
+  float: right;
 }
 
 .site .footer {
@@ -110,10 +116,6 @@ ul.posts span {
 .site .footer .contact {
   float: left;
   margin-right: 3em;
-}
-
-.site .footer .contact a {
-  color: #8085C1;
 }
 
 .site .footer .rss {
@@ -131,6 +133,11 @@ ul.posts span {
 /* Posts
 /*
 /*****************************************************************************/
+
+h2.post-title {
+  display: inline-block;
+  margin: 1em 0;
+}
 
 /* standard */
 #post pre {
