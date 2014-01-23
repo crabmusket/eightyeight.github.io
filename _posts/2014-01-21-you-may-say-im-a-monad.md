@@ -103,25 +103,25 @@ Each `>>=` (bind) takes a `Maybe Int` on the left, and a function on the right t
 So how does this let us seemingly ignore the `Nothing`s?
 Let's check out the instance declatation for `Monad (Maybe a)`:
 
-	instance Monad (Maybe a) where
-		Just x  >>= f  = f x
-		Nothing >>= _  = Nothing
-		return x = Just x
+    instance Monad (Maybe a) where
+        Just x  >>= f  = f x
+        Nothing >>= _  = Nothing
+        return x = Just x
 
 So, let's evaluate our expression with `x = Just 5` and `y = Nothing`:
 
-	z = Just 5  >>= (\x' ->
-		 Nothing >>= (\y' ->
-		 return (x' + y')))
-	
+    z = Just 5  >>= (\x' ->
+        Nothing >>= (\y' ->
+        return (x' + y')))
+
 Using the first pattern in the definition of `>>=`, we can reduce the first lambda, replacing `x'` with `5`:
 
-	z = Nothing >>= (\y' ->
-		 return (5 + y'))
+    z = Nothing >>= (\y' ->
+        return (5 + y'))
 
 But now we have `Nothing >>= \y' -> ...` - which, as we know from the second pattern in `Maybe`'s implementation of bind, will result in a `Nothing`:
 
-	z = Nothing
+    z = Nothing
 
 So, in effect, the definition of `>>=` does the error-checking for us, ensuring that if we ever run into a `Nothing` value, the whole computation will end and give back `Nothing`.
 And remember I said to notice the smiilarity between `Just (x' + y')` and `return (x' + y')` above?
@@ -152,7 +152,7 @@ It's called `<$>` to mirror the function application operator you're used to in 
 And it works like this:
 
     import Control.Applicative ((<$>), (<*>))
-	 z = add <$> x <*> y
+    z = add <$> x <*> y
 
 Pow.
 
@@ -161,13 +161,13 @@ Pow.
 As I covered in my [`liftM` micro-tutorial](http://www.reddit.com/r/haskell/comments/1pd1ep/microtutorial_liftm_by_accident/), _lifting_ is a general way to make a function operate inside a monad.
 In this case, since `(+)` has two arguments, we need the `liftM2` member of the family:
 
-	import Control.Monad (liftM2)
-	z = liftM2 (+) x y
+    import Control.Monad (liftM2)
+    z = liftM2 (+) x y
 
 Which, like `fmap` and like `pure`, we can think of as creating a new function, in this case a 'monadic' one, of two arguments:
 
-	z = liftedPlus x y
-		where liftedPlus = liftM2 (+)
+    z = liftedPlus x y
+        where liftedPlus = liftM2 (+)
 
 Many people use `fmap` in preference to `liftM` as it doesn't require an import (and almost all `Monad`s are `Functors`), but there's no standard `fmap2` or higher orders defined (though you could easily do so yourself).
 They can do this because most types that are `Monad`s are also `Functor`s.
@@ -183,15 +183,15 @@ That is, a list of tuples of every combination of the elements of the two lists.
 
 Here's an example:
 
-	xs = [1, 2]
-	ys = [3, 4]
-	zs = cartesian xs ys
-	-- zs == [(1, 3), (1, 4), (2, 3), (2, 4)]
+    xs = [1, 2]
+    ys = [3, 4]
+    zs = cartesian xs ys
+    -- zs == [(1, 3), (1, 4), (2, 3), (2, 4)]
 
 How would we do that in normal non-monadic code?
 In an imperative language, you'd probably write a nested `for` loop, which in Haskell usually means using `map`, like so:
 
-	cartesian xs ys = concat $ map (\x' -> map (\y' -> (x', y')) ys) xs
+    cartesian xs ys = concat $ map (\x' -> map (\y' -> (x', y')) ys) xs
 
 Take a second to look that over.
 (Also, ignore the obvious list-comprehension solution.
@@ -201,10 +201,10 @@ And we finally `concat` the whole lot so we end up with a flat list, rather than
 This is looking suspiciously like our desugared warhead monadic code from above - all these lambdas and variables ending in `'`.
 Well, to confirm your suspicions, let's rewrite this in a monad:
 
-	cartesian xs ys = do
-		x' <- xs
-		y' <- ys
-		return (x', y')
+    cartesian xs ys = do
+        x' <- xs
+        y' <- ys
+        return (x', y')
 
 This is almost identical to our monadic code when we used `Maybe`, except obviously we're making a tuple rather than adding the two bound elements.
 How can this be?
@@ -212,9 +212,9 @@ How does `<-` go from a list `xs` to a single value `x'`, and magically apply ou
 
 Well again, we need to look into the definition of `>>=` for lists.
 
-	instance Monad [a] where
-		xs >>= f = concat (map f xs)
-		return x = [x]
+    instance Monad [a] where
+        xs >>= f = concat (map f xs)
+        return x = [x]
 
 The type of `>>=` for lists is `[a] -> (a -> [b]) -> [b]`.
 `f` therefore has type `a -> [b]`, and mapping it over a `[a]` will produce a `[[b]]`, a list of list of `b`s, which is then flattened with `concat`.
@@ -239,11 +239,11 @@ Let's quickly revisit the applicative kingdom and rewrite our monadic function a
 Any guesses as to what it will look like?
 Again, I'll use `tuple`, a function of two arguments, instead of the usual `(,)` operator to reduce line noise:
 
-	cartesian xs ys = pure tuple <*> xs <*> ys
+    cartesian xs ys = pure tuple <*> xs <*> ys
 
 Or, as you'll see it in the wild:
 
-	cartesian xs ys = tuple <$> xs <*> ys
+    cartesian xs ys = tuple <$> xs <*> ys
 
 Mind = blown.
 As above, I won't go into the details of this syntax.
@@ -254,7 +254,7 @@ Here, I just want to expose you to the syntax.
 
 Forgive me as I make a brief roadside stop to ask: what does this code do?
 
-	fmap (+ 1) [1, 2, 3]
+    fmap (+ 1) [1, 2, 3]
 
 Try it out in GHCi.
 Does that behavior look oddly familiar?
@@ -262,13 +262,13 @@ Of course - it's the same as `map`!
 For historiacal reasons, we've ended up with `map` being a list-specific function and `fmap` being its more general cousin that works for all `Functor`s.
 In fact, `fmap` for lists is defined as `map`:
 
-	instance Functor [] where
-		fmap f xs = map f xs
+    instance Functor [] where
+        fmap f xs = map f xs
 
 I'd have preferred it differently, but you can't have everything in this life.
 But hey, you know what else is the same as `map`?
 
-	liftM (+ 1) [1, 2, 3]
+    liftM (+ 1) [1, 2, 3]
 
 Yup.
 
@@ -277,7 +277,7 @@ Yup.
 You might have spotted the easy solution to the cartesian product solution - a list comprehension.
 To whit:
 
-	cartesian xs ys = [(x', y') | x' <- xs, y' <- ys]
+    cartesian xs ys = [(x', y') | x' <- xs, y' <- ys]
 
 But hang on - even _that_ looks almost the same as our monadic solution, just all in one line!
 In case you've ever wondered why the `<-` is used in monads as well as list comprehensions, now you know - they _are_ the same!
@@ -288,8 +288,8 @@ We can actually use comprehensions for any monad type!
 
 In a special (ab?)use of syntax I like to call _lost in translation style_, we can perform a `Maybe` comprehension:
 
-	{-# LANGUAGE MonadComprehensions #-}
-	z = [x' + y' | x' <- x, y' <- y]
+    {-# LANGUAGE MonadComprehensions #-}
+    z = [x' + y' | x' <- x, y' <- y]
 
 Though we unfortunately have to enable a GHC extension to access general monad comprehensions, we can rewrite our `Maybe` addition code in one line without those funky applicative operators.
 
