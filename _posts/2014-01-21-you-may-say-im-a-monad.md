@@ -147,7 +147,7 @@ We've just done the same sort of thing as we did with monads - let the definitio
 Then `<*>` is used to apply arguments to this new box-aware function.
 
 I'll tell you the truth - you don't often see `pure` in the wild.
-Usually you see its cousin, `<$>`, a synonym for `fmap` that we can use in this situation
+Usually you see its cousin, `<$>`, a synonym for `fmap` that we can use in this situation.
 It's called `<$>` to mirror the function application operator you're used to in regular pure Haskell, `$`.
 And it works like this:
 
@@ -259,7 +259,7 @@ Forgive me as I make a brief roadside stop to ask: what does this code do?
 Try it out in GHCi.
 Does that behavior look oddly familiar?
 Of course - it's the same as `map`!
-For historiacal reasons, we've ended up with `map` being a list-specific function and `fmap` being its more general cousin that works for all `Functor`s.
+For historical reasons, we've ended up with `map` being a list-specific function and `fmap` being its more general cousin that works for all `Functor`s.
 In fact, `fmap` for lists is defined as `map`:
 
     instance Functor [] where
