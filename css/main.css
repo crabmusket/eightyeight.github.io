@@ -41,7 +41,7 @@ table {
 /*****************************************************************************/
 ul.posts {
   list-style-type: none;
-  margin: 1em 0;
+  margin: 1em 0.5em;
 }
 
 ul.posts li {
@@ -65,7 +65,8 @@ ul.posts span {
 .site {
   font-size: 115%;
   text-align: justify;
-  width: 36em;
+  width: 100%;
+  max-width: 36em;
   margin: 3em auto 2em;
   line-height: 1.5em;
 }
@@ -82,6 +83,7 @@ ul.posts span {
 .site .header h1.title {
   display: inline-block;
   margin-bottom: 1em;
+  margin-left: 0.5em;
 }
 
 .site .header h1.title a {
@@ -105,6 +107,7 @@ ul.posts span {
   color: #666;
   display: inline-block;
   float: right;
+  margin-right: 0.5em;
 }
 
 .site .footer {
@@ -112,6 +115,8 @@ ul.posts span {
   color: #666;
   border-top: 4px solid #eee;
   margin-top: 1em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
   overflow: hidden;
 }
 
@@ -138,11 +143,12 @@ ul.posts span {
 
 h2.post-title {
   display: inline-block;
-  margin: 1em 0;
+  margin: 1em 0.5em;
 }
 
 #post {
-  margin-bottom: 0.5em;
+  margin: 0.5em;
+  margin-top: 0;
 }
 
 /* standard */
@@ -150,6 +156,7 @@ h2.post-title {
   border: 1px solid #ddd;
   background-color: #eef;
   padding: 0 .4em;
+  white-space: pre-wrap;
 }
 
 #post ul, #post ol {
@@ -159,6 +166,9 @@ h2.post-title {
 #post code {
   border: 1px solid #ddd;
   background-color: #eef;
+}
+
+p code {
   padding: 0 .2em;
 }
 
