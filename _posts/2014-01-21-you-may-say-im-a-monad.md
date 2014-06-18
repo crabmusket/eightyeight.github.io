@@ -51,7 +51,7 @@ Here's a pretty simple, obvious implementation: use `case` to check whether the 
         Nothing -> Nothing
         Just x' -> case y of
             Nothing -> Nothing
-            Just y' -> Just (x + y)
+            Just y' -> Just (x' + y')
 
 Easy, right?
 Now if either `x` or `y` is `Nothing`, one of the cases will fail and the result, `z`, will be `Nothing`.
@@ -124,7 +124,7 @@ But now we have `Nothing >>= \y' -> ...` - which, as we know from the second pat
     z = Nothing
 
 So, in effect, the definition of `>>=` does the error-checking for us, ensuring that if we ever run into a `Nothing` value, the whole computation will end and give back `Nothing`.
-And remember I said to notice the smiilarity between `Just (x' + y')` and `return (x' + y')` above?
+And remember I said to notice the similarity between `Just (x' + y')` and `return (x' + y')` above?
 Well look at that - for `Maybe`, `return` is the same as `Just`!
 Isn't that great?
 But you may still be dissatisfied.
