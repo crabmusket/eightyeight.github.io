@@ -3,6 +3,8 @@ layout: post
 title:  "The Torque 3D unit testing system - a safari"
 date:   2014-06-22 20:10
 tags:   programming c++ torque safaris
+redirect_from:
+ - /2014/06/22/torque3d-unit-testing-system.html
 ---
 
 This is the first in a series of experimental posts that explore some of [Torque

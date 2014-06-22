@@ -1,2 +1,5 @@
 name: the crab musket
 pygments: false
+permalink: /:year-:month-:day/:title
+gems:
+ - jekyll-redirect-from
