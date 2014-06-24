@@ -226,10 +226,10 @@ helpful page. Most pertinently:
 
 > _nExitCode_ [in]
 > 
-> Type: _int_
+> Type: **int**
 > 
-> The application exit code. This value is used as the wParam parameter of the
-> WM_QUIT message.
+> The application exit code. This value is used as the _wParam_ parameter of the
+> **WM_QUIT** message.
 
 Okay, so Windows API messages have a parameter. Okay, I'm glad we looked up
 `Dispatch` and `DispatchNext` above, because of this:

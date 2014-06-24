@@ -187,3 +187,10 @@ p code {
 #post pre.terminal code {
   background-color: #333;
 }
+
+blockquote {
+  border-left: 5px solid #ddd;
+  margin-left: 1em;
+  padding-left: 0.5em;
+  font-size: small;
+}
