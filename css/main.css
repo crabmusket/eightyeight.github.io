@@ -76,6 +76,10 @@ ul.posts span {
   border-bottom: 4px solid #eee;
 }
 
+.site img {
+  max-width: 36em;
+}
+
 .site .header a {
   font-weight: bold;
   text-decoration: none;
