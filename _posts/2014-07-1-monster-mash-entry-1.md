@@ -71,14 +71,15 @@ And today, I:
 	It wasn't major, just meant that the chap would always accelerate to full speed instantly.
 	Which, you know, I could deal with, but I just wanted a bit of smoothness to the movement.
  * Added collision to the boardwalks, in order to set up a navmesh, which you can see below.
-   Apparently, my setup to avoid collision with the trees and other details didn't work.
+   Apparently, my efforts intended to make the trees and boardwalks un-collide-able didn't work.
    Which I should probably look into, as all those meshes should be hurting performance...
 
 ![Navmesh on island](http://imgur.com/KmodSQF.png)
 
  * Made the water not-see-through, thanks to Azaezel pointing out the underwater fog settings. Hoorah!
- * A bright suggestion from the #GarageGames IRC channel was to add more (by which I think they meant _any_) goats.
-	I'm very tempted...
+ * Made the shadows less rough, thanks to Steve for sharing his sun settings.
+ * Another bright suggestion from the #GarageGames IRC channel was to add more (by which I think they meant _any_) goats.
+	I'm very tempted... but it will probably have to wait until after the jam.
  * Also, thanks to that bunch, the game has a name: "Loch Ness Monster Simulator 2014".
 	It has a ring to it.
  * Added colours!
