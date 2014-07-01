@@ -24,7 +24,7 @@ Here's what I got done today, mostly in gaps between getting on and off aeroplan
    At the moment, it's completely see-through, which I don't want.
  * Re-learned how to get the game to capture mouse input directly (spoilers: it's not about your `ActionMap`, you have to set `noCursor` on your `GameTSControl`).
  * Fiddled with separate player/camera input schemes.
-   I discovered separating the player and camera is easy enough - you just call `stFirstPerson(false)` on the connection and it starts to view through the camera.
+   I discovered separating the player and camera is easy enough - you just call `setFirstPerson(false)` on the connection and it starts to view through the camera.
    It gets trickier when you want to to any sort of control of both of them.
    My first step now is to make the movement relative to the camera, rather than absolute.
    I'm sure there's a resource out there for that...
