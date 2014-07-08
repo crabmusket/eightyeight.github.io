@@ -76,8 +76,9 @@ ul.posts span {
   border-bottom: 4px solid #eee;
 }
 
-.site img {
-  max-width: 36em;
+.site img,
+.site iframe {
+  max-width: 100%;
 }
 
 .site .header a {

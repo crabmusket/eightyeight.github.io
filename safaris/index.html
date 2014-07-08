@@ -1,0 +1,21 @@
+---
+layout: default
+title: the crab musket
+---
+
+<h2 class="post-title">Safaris</h2>
+
+<div id="post">
+  <p>
+    Safaris are my experiment at documenting the <a href="http://torque3d.org">Torque 3D</a> game engine by writing stream-of-thought style logs of my adventures in the source code.
+    Along the way I experience many astonishing vistas, stalk many curious beasts, and learn arcane secrets, which I return to civilisation in order to share wih you, dear reader.
+  </p>
+</div>
+
+<div id="home">
+  <ul class="posts">
+    {% for post in site.tags.safaris %}
+      <li><span>{{ post.date | date_to_string }}</span> <a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
+</div>
