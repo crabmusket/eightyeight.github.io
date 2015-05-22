@@ -173,6 +173,7 @@ h2.post-title {
 #post code {
   border: 1px solid #ddd;
   background-color: #eef;
+  border-radius: 3px;
 }
 
 p code {
