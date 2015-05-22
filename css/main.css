@@ -51,10 +51,11 @@ ul.posts li {
 
 ul.posts span {
   color: #666;
-  font-family: Monaco, "Courier New", monospace;
   font-size: 80%;
   font-weight: normal;
   margin-right: 0.75em;
+  width: 70px;
+  display: inline-block;
 }
 
 /*****************************************************************************/
