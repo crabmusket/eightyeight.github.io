@@ -38,6 +38,21 @@ With all that in mind, there are three broad topics we'll cover today:
 Hopefully this will put you in a good position to read more detailed posts about all of these topics with some high-level understanding of the whole system and the various pieces involved.
 Throughout this post, I'll link to the best other pieces of writing I've discovered on various subjects - the ones that really helped me, and the ones I had trouble with until I had some basic understanding of other parts of the system.
 
+## The overview
+
+Here's a diagram of a simple two-machine CoreOS cluster.
+Don't worry if it doesn't make any sense right now - I'm about to tell you all about it.
+
+![Two-machine cluster](https://cloud.githubusercontent.com/assets/904269/7782873/983250ba-016f-11e5-88c5-299dcd82b306.jpg)
+
+The big rectangles are obviously separate computers - of which two represent cloud machines running CoreOS, and one represents my local computer.
+The little blue ones represent running services or programs.
+Each cloud machine has a couple of daemons running, and I run `fleetctl` locally.
+Finally, the yellow rectangles are _containers_, each of them running some sort of process, whether it be an application, database, etc.
+
+The lines represent some form of communication - networked or otherwise.
+We'll refer back to this diagram at the end of this post, and hopefully it will make a lot more sense!
+
 ## Containers, from afar
 
 This is going to be a brief section, because frankly, I still don't understand containers very intimately.
