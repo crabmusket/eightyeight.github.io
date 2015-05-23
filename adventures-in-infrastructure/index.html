@@ -1,0 +1,21 @@
+---
+layout: default
+title: the crab musket
+---
+
+<h2 class="post-title">Adventures in infrastructure</h2>
+
+<div id="post">
+  <p>
+    My trials and triumphs learning how to <i>do infrastructure</i> using CoreOS and containers.
+    Reader beware.
+  </p>
+</div>
+
+<div id="home">
+  <ul class="posts">
+    {% for post in site.tags.aii %}
+      <li><span>{{ post.date | date_to_string }}</span> <a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
+</div>
