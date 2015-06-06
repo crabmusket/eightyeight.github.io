@@ -17,8 +17,10 @@ I'd appreciate being corrected on them!)
 I recently wrote a [toy program](https://gist.github.com/eightyeight/5657087) that had to read matrices from user input.
 I first wrote it using this pattern:
 
-    str <- getLine
-    let mat = readMatrix str
+```haskell
+str <- getLine
+let mat = readMatrix str
+```
 
 Of course, `getLine` is from the Prelude (and has type `IO String`).
 `readMatrix` is from [hmatrix](http://hackage.haskell.org/package/hmatrix).
@@ -35,7 +37,9 @@ According to [the wiki](http://en.wikibooks.org/wiki/Haskell/do_Notation), the _
 Bind takes a monadic value on the left-hand side, "unboxes" it, and feeds it to a monadic function on the right-hand side.
 So I could rewrite my two lines as one line with a bind:
 
-    mat <- getLine >>= \x -> return (readMatrix x)
+```haskell
+mat <- getLine >>= \x -> return (readMatrix x)
+```
 
 Since binding is a monadic operation, you can't just bind `getLine` directly to a pure function (like, `getLine >>= readMatrix`).
 The whole expression must return some monadic value, which we when purify using the `<-` notation after the bind has happened.
@@ -43,17 +47,23 @@ The whole expression must return some monadic value, which we when purify using 
 So I managed to condense my two lines into one line, but it's still fairly ugly, with all that line noise in there.
 We can at least get rid of the lambda by using a [pointfree](http://www.haskell.org/haskellwiki/Pointfree) style:
 
-    mat <- getLine >>= return . readMatrix
+```haskell
+mat <- getLine >>= return . readMatrix
+```
 
 But this still smelled like boilerplate.
 Surely, I told myself, surely people need to perform some impure/monadic function, pass it to a pure function, and get an impure result back which they can purify by binding it.
 In fact, I could write a little utility function for it myself:
 
-    doSomething impureFn pureFn = impureFn >>= return . pureFn
+```haskell
+doSomething impureFn pureFn = impureFn >>= return . pureFn
+```
 
 And now, I could rewrite my input line like this:
 
-    mat <- doSomething getLine readMatrix
+```haskell
+mat <- doSomething getLine readMatrix
+```
 
 Suspecting that this function may already exist, I set off to [Hoogle](http://www.haskell.org/hoogle) to find it.
 I discovered the type of my new function using GHCi:
@@ -64,15 +74,18 @@ I discovered the type of my new function using GHCi:
 And Hoogle turned up `liftM` from the [Control.Monad](http://hackage.haskell.org/package/base-4.6.0.1/docs/Control-Monad.html#v:liftM) package as the [first result](http://www.haskell.org/hoogle/?hoogle=%28Monad+m%29+%3D%3E+m+a1+-%3E+%28a1+-%3E+r%29+-%3E+m+r), even though the arguments are flipped.
 So, my code above was now equivalent to:
 
-    mat <- liftM readMatrix getLine
+```haskell
+mat <- liftM readMatrix getLine
+```
 
 Which is about as concise as I could ask for.
 So, if you ever need to perform a pure operation on a monadic value, try `lift`ing your function! Here are the original and the final versions side-by-side:
 
-    -- Explicit
-    strMat <- getLine
-    let mat = readMatrix strMat
+```haskell
+-- Explicit
+strMat <- getLine
+let mat = readMatrix strMat
 
-    -- Lifted
-    mat <- liftM readMatrix getLine
-
+-- Lifted
+mat <- liftM readMatrix getLine
+```

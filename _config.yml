@@ -1,5 +1,5 @@
 name: the crab musket
-pygments: false
+highlight: pygments
 markdown: redcarpet
 permalink: /:year-:month-:day/:title
 gems:
