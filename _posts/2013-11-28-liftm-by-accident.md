@@ -3,8 +3,6 @@ layout: post
 title:  "Micro-tutorial: liftM by accident"
 date:   2013-11-28 03:46
 tags:   haskell tutorials programming
-redirect_from:
- - /2013/11/28/liftm-by-accident.html
 ---
 
 As a relatively new Haskeller, I've been mystified at the `lift` family of functions.

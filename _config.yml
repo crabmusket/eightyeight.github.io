@@ -2,5 +2,3 @@ name: the crab musket
 highlight: pygments
 markdown: redcarpet
 permalink: /:year-:month-:day/:title
-gems:
- - jekyll-redirect-from
