@@ -160,28 +160,19 @@ h2.post-title {
 
 /* standard */
 #post pre {
-  border: 1px solid #ddd;
-  background-color: #eef;
   padding: 0 .4em;
   overflow-x: auto;
 }
 
-#post ul, #post ol {
-  margin-left: 1.9em;
-}
-
-#post code {
+#post p code {
+  padding: 0 .2em;
   border: 1px solid #ddd;
   background-color: #eef;
   border-radius: 3px;
 }
 
-p code {
-  padding: 0 .2em;
-}
-
-#post pre code {
-  border: none;
+#post ul, #post ol {
+  margin-left: 1.9em;
 }
 
 /* terminal */
