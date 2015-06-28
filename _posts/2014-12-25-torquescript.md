@@ -63,7 +63,7 @@ This is _defintiely_ not a citicism of TorqueScript's original creators, but I r
 CoffeeScript is a very popular example of this paradigm, but I'll show you some Rust code since it's got curly braces:
 
 ```rust
-let result = if this == that {
+let result = if (this == that) {
     let x = 5, y = 10;
     x + y
 } else {
