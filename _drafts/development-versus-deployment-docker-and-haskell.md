@@ -7,17 +7,14 @@ tags:   docker haskell
 
 This post was prompted by a [recent discussion](https://www.reddit.com/r/haskell/comments/3bmzn8/how_can_i_improve_build_time_especially_on_docker/) about using Docker for Haskell development.
 The question was: how do I develop quickly using Docker, and avoid waiting for the container to be rebuilt all the time?
-My answer is - for a compiled language like Haskell - that you should be separating your development and deployment.
+My answer is that you should develop in one container, and deploy an _entirely different_ container.
 
 Now, this does sound odd, given that Docker was supposed to be the great equaliser between development and production environments.
-Docker sells itself on the idea that when we deploy a container, we're deploying exactly what we wrote and tested on.
-There are two disclaimers I'd like to make about this before I continue:
+Docker sells itself on the idea that when we deploy a container, we're deploying to the exact environment that we developed and tested in.
+There are two comments I'd like to make about this:
 
  * For compiled applications, environment matters less than applications that depend on a language runtime.
-   Once I have a binary, I can be a lot more lax about the environment I deploy it to.
- * You should be testing the containers that you deploy to production, even if you don't necessarily develop in them.
-   There's no reason to deploy a container with your development tools in it.
-   But once you've build your 'production' container, you should definitely test it locally and in staging before shipping it.
+ * You _should_ be testing the containers that you deploy to production, even if they're not the containers you did development in.
 
 With those points in mind, here's my process for using Docker for developing and deploying Haskell.
 
@@ -47,25 +44,28 @@ Ah yes.
 Some projects might require specific binaries installed, like the `yesod` set of tools, or even your favourite editor, `ghc-mod`, etc.
 I do most of my Haskelling without any such tools, but if I _were_ going to use them, I'd make my own container to do so, which I could use in place of the vanilla container:
 
-    $ docker run -ti --rm -v $(pwd):/code eightyeight/haskell:7.10-yesod bash
+    $ docker run -ti --rm -v $(pwd):/code eightyeight/hypothetical-yesod-container:7.10 bash
 
 This container would be built from a Dockerfile in its own directory elsewhere, not from this current project's Dockerfile.
+
 I'll admit this is a little bit of a weak solution - for instance, it'd be better to ensure that the version of `yesod devel` was the correct one specified in your project's Cabal file.
 My _tentative_ recommendation for this is to try to install all binaries in the Cabal sandbox, and set your path so that you can run them as usual.
-I've never tried it for Haskell, so I can't make any specific recommendations there, but it's how I work with Node projects.
 
-## A simpler way?
+I've never tried this in a Haskell project, so I can't exactly sell this as a complete solution, but this is the approach I take to working on Node projects.
+I avoid installing (e.g.) `gulp` globally, and instead create `npm` scripts that run `gulp` from the local `node_modules` folder.
+
+## Just write your Dockerfile properly!
 
 At this point if you're familiar with Docker at all, you might have realised that the answer to needing to rebuild the container constantly is usually to stop changing your Dockerfile all the time.
 After all, Docker is really great at using cached layers when your files haven't changed.
 If you simply order the commands in your Dockerfile correctly, you should be able to avoid pretty much all the pain!
 
-The [official Haskell image](https://registry.hub.docker.com/_/haskell/) readme shows you how to do this in a principled way.
+The [official Haskell image](https://registry.hub.docker.com/_/haskell/) readme shows you how to do this.
 You first add your Cabal file to the project, which creates a layer:
 
     ADD example.cabal /code/snap-example.cabal
 
-You then install all dependencies.
+You then install all dependencies, creating another layer:
 
     RUN cd /code && cabal install --only-dependencies -j4
 
