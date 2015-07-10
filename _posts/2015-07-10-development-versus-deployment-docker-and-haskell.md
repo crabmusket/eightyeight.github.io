@@ -95,6 +95,9 @@ I firmly believe that for deployment containers, you should not be starting with
 [haskell-scratch](https://github.com/snoyberg/haskell-scratch) is a cute little project that lets you create a minimal Docker container with only the shared libraries needed to run Haskell binaries compiled with GHC.
 This means that you can start with a Docker container that's essentially empty and add nothing but your executable to it.
 
+(NB: sometimes, `haskell-scratch` may be _too_ minimal, as [insitu notes](https://www.reddit.com/r/haskell/comments/3crcq7/development_versus_deployment_docker_and_haskell/csyaa4j).
+You might consider using `busybox` instead.)
+
 The workflow is slightly more complex.
 To start using `haskell-scratch`, you'll need to compile it yourself locally, as there's no Docker Hub image.
 However, this is as simple as cloning [the repository](https://github.com/snoyberg/haskell-scratch) to your computer and running `make`.
