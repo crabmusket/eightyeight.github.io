@@ -42,16 +42,17 @@ This is a slight annoyance, but I usually do it in that foggy minute right after
 
 Ah yes.
 Some projects might require specific binaries installed, like the `yesod` set of tools, or even your favourite editor, `ghc-mod`, etc.
-I do most of my Haskelling without any such tools, but if I _were_ going to use them, I'd make my own container to do so, which I could use in place of the vanilla container:
+I do most of my Haskelling without any such tools, and I edit in my host, not inside the container.
+But if I _were_ going to use them, I'd make my own container to do so, which I could use in place of the vanilla container:
 
     $ docker run -ti --rm -v $(pwd):/code eightyeight/hypothetical-yesod-container:7.10 bash
 
 This container would be built from a Dockerfile in its own directory elsewhere, not from this current project's Dockerfile.
 
-I'll admit this is a little bit of a weak solution - for instance, it'd be better to ensure that the version of `yesod devel` was the correct one specified in your project's Cabal file.
+I'll admit this is a little bit of a weak solution - for instance, it'd be better to ensure that the version of `yesod devel` was the correct one as specified in your project's Cabal file.
 My _tentative_ recommendation for this is to try to install all binaries in the Cabal sandbox, and set your path so that you can run them as usual.
 
-I've never tried this in a Haskell project, so I can't exactly sell this as a complete solution, but this is the approach I take to working on Node projects.
+I've never tried this in a Haskell project, so I can't exactly sell this as a complete solution, but this is the approach I take with Node projects.
 I avoid installing (e.g.) `gulp` globally, and instead create `npm` scripts that run `gulp` from the local `node_modules` folder.
 
 ## Just write your Dockerfile properly!
@@ -78,33 +79,30 @@ Then, finally, you add the rest of your application code, and compile it:
     RUN cd /code && cabal install
 
 This structure maximises your Docker cache usage, by ensuring that you only re-create the final layer when you change your code.
-
 However, even though this does provide an advantage, I still think we should go further when building applications for deployment.
 
 # Deployment
 
-As I start to deploy Docker containers others have built, I'm starting to run into many cases of containers, particularly ones using Go applications, that are based on the `golang` official container.
-I see this in Haskell, too - and the advice in the above section (straight from the official readme) certainly suggests that the first line of your application's Dockerfile should be `FROM haskell`.
+As I've started to deploy Docker containers others have built, I'm starting to run into many cases of containers, particularly ones packing Go applications, that are based on the `golang` official container.
+I've seen this with Haskell containers, too, and the advice in the previous section (straight from the official readme) certainly suggests that the first line of your application's Dockerfile should be `FROM haskell`.
 
 I contend that this is bad container etiquette.
 When I go to install your application, I've now just downloaded, in the case of a Haskell application, 700MB.
 This includes an operating system, GHC, its attendant infrastructure, and also your application's source code.
 But your application is actually just a single binary that's probably less than 70MB.
 
-(Go's official container weighs in at around 500MB.)
-
-I firmly believe that for deployment containers, you should be starting not from `haskell`, but from `haskell-scratch`.
-[Haskell-scratch](https://github.com/snoyberg/haskell-scratch) is a cute little project that lets you create a minimal Docker container with only the shared libraries needed to run Haskell binaries compiled with GHC.
+I firmly believe that for deployment containers, you should not be starting with `FROM haskell`, but from `haskell-scratch`.
+[haskell-scratch](https://github.com/snoyberg/haskell-scratch) is a cute little project that lets you create a minimal Docker container with only the shared libraries needed to run Haskell binaries compiled with GHC.
 This means that you can start with a Docker container that's essentially empty and add nothing but your executable to it.
 
 The workflow is slightly more complex.
 To start using `haskell-scratch`, you'll need to compile it yourself locally, as there's no Docker Hub image.
-However, that task is as simple as cloning [the repository](https://github.com/snoyberg/haskell-scratch) to your computer and running `make`.
+However, this is as simple as cloning [the repository](https://github.com/snoyberg/haskell-scratch) to your computer and running `make`.
 
 This will create two Docker images in your local Docker database: `haskell-scratch:integer-simple` and `haskell-scratch:integer-gmp`, containing linkages to the two different big-int libraries GHC can use.
 Deploying an application using this library is as simple as this Dockerfile:
 
-    FROM haskell-scratch:integer-gmp
+    FROM haskell-scratch:integer-simple
     COPY dist/build/example/example /bin/example
     ENTRYPOINT ["/bin/example"]
 
@@ -114,11 +112,11 @@ I needed a tiny lightweight demo server which I could configure from the command
 To build your application, you must first compile the executable from your development Docker container (the one that _is_ based on `haskell`), then run `docker build` outside that container to copy the binary into the deployment image.
 
 I really think this is an advantageous workflow.
-I'd love to hear the opinions of more experienced Docker-ers and Haskellers.
-I haven't thought about how [stack](https://github.com/commercialhaskell/stack) will impact this workflow; for me, my current setup is fine for small projects, but I have no doubt that this approach will start to break down when you have larger projects, multiple binaries, etc.
+I'd love to hear the opinions of more experienced Haskellers and Docker-ers.
+I haven't thought about how [stack](https://github.com/commercialhaskell/stack) will impact this workflow; for me, my current setup is fine for small projects, but I have no doubt that this approach will start to break down on larger projects, multiple binaries, etc.
 
 # Prior art
 
-I should acknowledge two primary influences on this post.
+I should acknowledge two main influences on this post.
 First and foremost, the FP complete article [a Haskell web server in a 5MB Docker container](https://www.fpcomplete.com/blog/2015/05/haskell-web-server-in-5mb), which introduced the `haskell-scratch` project.
 And secondly, [this great article](http://blog.xebia.com/2014/07/04/create-the-smallest-possible-docker-container/) about using `scratch`, the _actually empty_ Docker container, to deploy Go applications.
