@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Development versus deployment: Docker and Haskell"
-date:   2015-07-10 12:54
+date:   2015-07-10 13:45
 tags:   docker haskell
 ---
 
