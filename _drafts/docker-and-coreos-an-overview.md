@@ -1,21 +1,18 @@
 ---
 layout: post
-title:  "Docker and CoreOS, a summary"
+title:  "Docker and CoreOS, an overview in pictures"
 date:   2015-05-23 13:10
 tags:   coreos docker aii
 ---
 
-_The first post in [adventures in infrastructure](/adventures-in-infrastructure)_
+The world of containerised deployment is a little opaque at first.
+Over the last month or two, I've been trying to introduce myself to it.
+It wasn't easy at first, and information is pretty scattered, but I feel I've learned enough that I can pass some knowledge on to others who are also interested and don't know where to start.
 
-Over the last month or two, I've been trying to introduce myself to the strange new world of development, deployment and operations with containers.
-I haven't had a ton of experience at ops _without_ containers, but since they make my development process easier, I figured it was a natural choice to stick with them right on through to deployment.
-It's been a fun ride, and while it's far from over, I thought I'd sit down and write up my experiences so far, as a sort of breadcrumb trail for anyone who wants to follow in my path.
-
-The world of containerised deployment is a little opaque at first, and there are a myriad of ways into it.
-To make matters worse, I was determined to use CoreOS to run my containers on, which added another layer of complexity to the proceedings.
-CoreOS comes with its own raft of technologies, processes and lessons.
-Despite all that, it seems like a technology that will grow with me - from a single server to host my blog on, all the way up to a cloud cluster running a complex application.
-Being able to develop, test, and deploy in environments as close to each other as possible was also a very alluring promise of the container model.
+I haven't had a ton of experience at ops _without_ containers, but since I've been using Docker as a super easy way to spin up development environments, I figured it was a natural choice to stick with them right on through to deployment.
+However, I wanted to do it _right_, and the CoreOS philosophy appealed to me the most.
+It seems like a technology that will grow with me - from a single server to host my blog on, all the way up to a cloud cluster running a complex application.
+CoreOS comes with its own ecosystem and workflow, making it an even taller order to learn on top of Docker.
 
 This post is intended to be the first of several describing my adventures in infrastructure.
 I'l be writing these as I learn things, so expect them to be filled with mistakes, misunderstandings, missteps and herrings of all colours.
@@ -29,28 +26,29 @@ Essentially, I want to learn how to develop and deploy web applications reliably
 I assume you do, too.
 I also assume that, like me, you don't know tons about traditional deployment or containerised deployment.
 
-With all that in mind, there are three broad topics we'll cover today:
+With all that in mind, there are four broad topics I'll cover in this post:
 
- * Containers
- * Docker, a tool for managing containers
- * CoreOS, and its ecosystem of utilities
+ * Linux containers: like process isolation on steroids
+ * Docker: a tool for creating and managing linux containers
+ * CoreOS: a minimal Linux distribution designed to run containerised applications
+ * Fleet, Etcd, and Confd: utilities that ship with CoreOS
 
 Hopefully this will put you in a good position to read more detailed posts about all of these topics with some high-level understanding of the whole system and the various pieces involved.
 Throughout this post, I'll link to the best other pieces of writing I've discovered on various subjects - the ones that really helped me, and the ones I had trouble with until I had some basic understanding of other parts of the system.
 
-## The overview
+## Anatomy of a cluster
 
-Here's a diagram of a simple two-machine CoreOS cluster.
-Don't worry if it doesn't make any sense right now - I'm about to tell you all about it.
+Here's a diagram of a simple two-machine cluster using CoreOS and Docker.
+Don't worry if it doesn't make any sense right now - by the end of this post, it should!
 
 ![Two-machine cluster](https://cloud.githubusercontent.com/assets/904269/7782873/983250ba-016f-11e5-88c5-299dcd82b306.jpg)
 
-The big rectangles are obviously separate computers - of which two represent cloud machines running CoreOS, and one represents my local computer.
-The little blue ones represent running services or programs.
-Each cloud machine has a couple of daemons running, and I run `fleetctl` locally.
-Finally, the yellow rectangles are _containers_, each of them running some sort of process, whether it be an application, database, etc.
+The big rectangles are physically separate computers - of which two represent cloud machines running CoreOS, and one represents my local computer.
+The little blue rectangles are services running on each machine.
+Finally, the yellow rectangles are containers, each of them running some sort of process, whether it be an application, database, etc.
 
 The lines represent some form of communication - networked or otherwise.
+(I haven't been very precise with these lines - there should be a lot more of them, but I've just tried to give you the general gist of the communication that goes on!)
 We'll refer back to this diagram at the end of this post, and hopefully it will make a lot more sense!
 
 ## Containers, from afar
