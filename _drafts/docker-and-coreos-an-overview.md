@@ -31,14 +31,14 @@ With all that in mind, there are four broad topics I'll cover in this post:
  * Linux containers: like process isolation on steroids
  * Docker: a tool for creating and managing linux containers
  * CoreOS: a minimal Linux distribution designed to run containerised applications
- * Fleet, Etcd, and Confd: utilities that ship with CoreOS
+ * Fleetd and Etcd: utilities that ship with CoreOS
 
 Hopefully this will put you in a good position to read more detailed posts about all of these topics with some high-level understanding of the whole system and the various pieces involved.
 Throughout this post, I'll link to the best other pieces of writing I've discovered on various subjects - the ones that really helped me, and the ones I had trouble with until I had some basic understanding of other parts of the system.
 
 ## Anatomy of a cluster
 
-Here's a diagram of a simple two-machine cluster using CoreOS and Docker.
+Here's a diagram of a simple two-machine 'cluster' using CoreOS and Docker.
 Don't worry if it doesn't make any sense right now - by the end of this post, it should!
 
 ![Two-machine cluster](https://cloud.githubusercontent.com/assets/904269/7782873/983250ba-016f-11e5-88c5-299dcd82b306.jpg)
@@ -51,90 +51,67 @@ The lines represent some form of communication - networked or otherwise.
 (I haven't been very precise with these lines - there should be a lot more of them, but I've just tried to give you the general gist of the communication that goes on!)
 We'll refer back to this diagram at the end of this post, and hopefully it will make a lot more sense!
 
-## Containers, from afar
+## Containers
 
-This is going to be a brief section, because frankly, I still don't understand containers very intimately.
-Basically, you can think of a container as a lightweight virtual machine.
-It's kind of like a chroot.
-But these things can be _really_ light.
-Like, so light they include [nothing but your application executable][docker-golang-scratch].
-
-The idea of a container is that they contain everything needed to run your application, with their only dependency being a kernel.
-That makes them super-portable.
-You can take a container built on any machine, and run it on any other machine.
-(With caveats, of course - for example, you can't run containers natively on Windows currently, because they're a Linux technology.
-They're not _that_ magical.)
-
-I hope that made sense, because it just gets more complex from here.
-
-## Docker, as viewed from the stratosphere
-
-Docker is a tool for creating, managing and running containers.
-To be perfectly honest, I don't know how difficult this stuff is without Docker, because it's all I have experience with.
-Essentially, `docker` is the command that you'll use when you want to interact with your containers.
-
-In Docker, you get used to managing both images and containers.
-
- * **Images** are exactly what they sound like - images of a filesystem that you want to run in a container.
-   For example, you could have a Debian image that contains a full copy of a Debian server.
-   Or you could have an Nginx image that contains just the files necessary to run the Nginx server.
- * **Containers** are the actual running instances of images. 
-
-The Docker command-line client gives you all sorts of commands for interacting with both images and containers.
-It also, critically, lets you compile images, using a Dockerfile and your application source code.
-A Dockerfile tells Docker what things to stuff into the image, and therefore what resources your container will have available to it at runtime.
-
-Docker is clever, though, at reusing images - for example, if I have three different applications, which all need to run in a Debian environment, those three containers will all refer to the Debian base image, and branch off them like a tree.
-This means that I only have to store one copy of the Debian image, and then can store three small layers, one with the modifications on top of Debian for each of my applications.
-
-If you're familiar with git, it starts to feel exactly like the graph of commits in a repository - and the analogy is helped by the way Docker gives each image a uique hash ID.
-Docker also has infrastructure built around this, like the Docker registry, which you can use to upload and download images.
-
-There are additional tools, like Docker Compose, which helps you manage running several containers that need to work together.
-However, I've tried to keep away from this, and use Docker only for container and image management.
-CoreOS will provide the coordination layers atop this, as we're about to find out.
-
-## CoreOS, on the surface
-
-Despite what I've titled this section, there's very little to tell you about CoreOS 'on the surface', so we're inevitably going to have to dig down a little.
-At its simplest level, CoreOS is an operating system like Debian or Ubuntu.
-It's a very minimal OS, with almost nothing built-in.
-It's designed to do nothing but run containers and some supporting services.
-
-## The above, in pictures
-
-I feel like now is the time, before we get into the heavy stuff, to have a brief interlude to recap some of the stuff we've just covered.
-I will use pictures to do this.
-Imagine these shipping containers are your applications.
+You can think of a container as a lightweight virtual machine.
+_Really_ light.
+In terms of what's in the container, it might be anywhere from a whole OS (like a traditional VM) to [nothing but your application executable][docker-golang-scratch].
+At runtime, they work essentially like any other process, except they're sandboxed so that they can't touch your regular OS files, only the files that are inside the container.
 
 ![Shipping containers](http://www.lighthome.com.au/Images/How%20do%20I/Shipping%20Containers/shipping-containers.jpg)
 
-Each container is some service - an API server, a load balancer, a database, a log aggregator, and so on. These containers are created using Docker, which is like, I don't know, whoever packs the stuff into shipping containers.
+The only dependency the container has is on your kernel, which makes them super-portable.
+You can take a container built on any machine, and run it on pretty much any other machine.
+(With caveats, of course - for example, you can't run containers natively on Windows currently, because they're a Linux technology.
+They're not _that_ magical.)
 
-![Stevedores](http://tlisc.org.au/wp-content/uploads/2014/06/Stevedore-Team-Leader1.jpg)
+[docker-golang-scratch]: http://blog.xebia.com/2014/07/04/create-the-smallest-possible-docker-container/
 
-But containers can't do anything in isolation. CoreOS is where we run containers: like this vessel, each CoreOS server runs a bunch of containers.
+## Docker
+
+Docker is a tool for creating images and running them in containers.
+Docker images are created using a Dockerfile, and they capture the state of a filesystem, like the 'disk images' that are stored when you run a VM.
+Unlike VM disk images, Docker tracks each change you make to an image when you build it almost like commits in a git repository, giving each 'layer' a unique ID.
+This has a couple of implications:
+
+ * When you edit the contents of an image (for example, your application code), only layers _after_ those contents are added must be rebuilt.
+   This saves quite a bit of time when you're creating images!
+ * Layers can be shared between images - for example, a Debian or Ubuntu base image can be cached and reused easily by other images.
+
+Docker is basically like the movers who pack items into a container.
+
+![Packing a container](http://www.hiloliving.com/Move/packingupthematsoncontainer.JPG)
+
+The Docker command-line client gives you all sorts of commands for interacting with both images and containers.
+There is also a rapidly-growing ecysostem around Docker itself, both third-party tools and a growing suite of Docker-branded utilities like Docker Compose, which helps you manage running several containers that together comprise a single 'application' (say, a web app container and a database container).
+
+However, I've tried to keep my use of the Docker infrastructure to a minimum, and use Docker only for container and image management.
+CoreOS's ecosystem will provide the coordination layers atop this, as I'm about to detail.
+
+## CoreOS
+
+CoreOS is a very minimal Linux distribution designed to run on cluster servers.
+One of the most surprising parts is it has no package manager like Ubuntu or Fedora; you're expected to 'install' and run your applications exclusively using containers.
+At the moment, this means using Docker, but the CoreOS team is also developing their own container runtime, rkt.
 
 ![Containers on a ship](http://static.progressivemediagroup.com/uploads/imagelibrary/The%20worlds%20biggest%20cargo%20container%20ships.jpg)
 
-Note that you probably shouldn't run *this* many containers on a server, depending on what they are. But remember that for a serious application, you'll probably have lots of servers - each its own vessel, running a bunch of containers on it.
+So CoreOS, in the visual metaphor we're developing here, is the boat all the containers are shipped on.
+It provides the kernel, and your containers provide the rest.
 
-![A fleet of container ships](https://ferrebeekeeper.files.wordpress.com/2012/10/3417930513_392816a872.jpg)
+## CoreOS components
 
-That's your cluster.
-
-## CoreOS's supporting cast
-
-CoreOS, the vessel on which our containers are shipped, comes with its own set of attendant daemons and tools (like the crew of the ship!).
-CoreOS's philosophy is to be modular instead of monolithic, and in theory any of these components could be swapped out - however, they're good defaults, and they ship with CoreOS by default, so let's consider them essential for now.
+CoreOS comes with its own set of attendant daemons and tools.
+CoreOS's philosophy is to be modular instead of monolithic, and in theory any of these components could be swapped out - however, they're good defaults, and they're installed on CoreOS by default, so let's consider them essential for now.
 
 Here's where my ship-themed visual aids start to break down, but bear with me a little.
 
-### Fleet: loading and unloading
+### Fleetd: loading and unloading
 
 We need a way to get all these containers on our ships.
 Fleet, which we run on the command-line as `fleetctl`, is a program that lets us distribute 'services' across our CoreOS machines.
-It uses `systemd`, a Linux utility for managing long-running process.
+`fleetd` is the daemon that runs on the machines themselves.
+It uses `systemd`, a Linux utility for managing long-running process, to manage the various 
 
 The Fleet workflow looks something like this:
 
@@ -194,3 +171,6 @@ For example, you could set it up to watch Redis or ZooKeeper.
 
 There's a lot to take in, especially when you're just reading about it.
 Next time, I'll go over a high-level architecture of how I'm going to deploy my own little one-machine cluster, and hopefully this will all become a bit more concrete.
+
+
+![A fleet of container ships](https://ferrebeekeeper.files.wordpress.com/2012/10/3417930513_392816a872.jpg)
