@@ -27,7 +27,7 @@ h1, h2, h3, h4, h5, h6 {
 h1 { margin-bottom: 1em; }
 p  { margin: 1em 0; }
 
-a       { color: #a00; text-decoration: none; }
+a       { color: #44c; text-decoration: none; }
 a:hover { color: #000; }
 
 table {
@@ -73,10 +73,6 @@ ul.posts span {
   line-height: 1.5em;
 }
 
-.site .header {
-  border-bottom: 4px solid #eee;
-}
-
 .site img,
 .site iframe {
   max-width: 100%;
@@ -94,7 +90,7 @@ ul.posts span {
 }
 
 .site .header h1.title a {
-  color: #a00;
+  color: #44c;
 }
 
 .site .header h1.title a:hover {
@@ -120,7 +116,6 @@ ul.posts span {
 .site .footer {
   font-size: 80%;
   color: #666;
-  border-top: 4px solid #eee;
   margin-top: 1em;
   margin-left: 0.5em;
   margin-right: 0.5em;
