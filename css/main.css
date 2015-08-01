@@ -40,22 +40,30 @@ table {
 /* Home
 /*
 /*****************************************************************************/
-ul.posts {
-  list-style-type: none;
-  margin: 1em 0.5em;
+.posts {
+  margin: 1em 1.5em;
+  text-align: left;
+  list-style: none;
 }
 
-ul.posts li {
-  line-height: 1.75em;
+.posts .post {
+  padding-bottom: 0.7em;
+  position: relative;
 }
 
-ul.posts span {
+.posts .post:before {
+  content: '>';
+  position: absolute;
+  left: -0.9em;
+  color: #666;
+}
+
+.posts .date {
   color: #666;
   font-size: 80%;
   font-weight: normal;
-  margin-right: 0.75em;
-  width: 70px;
-  display: inline-block;
+  margin-left: 0.75em;
+  white-space: nowrap;
 }
 
 /*****************************************************************************/
