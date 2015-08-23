@@ -41,7 +41,7 @@ Throughout this post, I'll link to the best other pieces of writing I've discove
 Here's a diagram of a simple two-machine 'cluster' using CoreOS and Docker.
 Don't worry if it doesn't make any sense right now - by the end of this post, it should!
 
-![Two-machine cluster](https://cloud.githubusercontent.com/assets/904269/7782873/983250ba-016f-11e5-88c5-299dcd82b306.jpg)
+![Two-machine cluster][img-cluster]
 
 The big rectangles are physically separate computers - of which two represent cloud machines running CoreOS, and one represents my local computer.
 The little blue rectangles are services running on each machine.
@@ -51,21 +51,30 @@ The lines represent some form of communication - networked or otherwise.
 (I haven't been very precise with these lines - there should be a lot more of them, but I've just tried to give you the general gist of the communication that goes on!)
 We'll refer back to this diagram at the end of this post, and hopefully it will make a lot more sense!
 
+[img-cluster]: https://cloud.githubusercontent.com/assets/904269/7782873/983250ba-016f-11e5-88c5-299dcd82b306.jpg
+
 ## Containers
 
 You can think of a container as a lightweight virtual machine.
 _Really_ light.
 In terms of what's in the container, it might be anywhere from a whole OS (like a traditional VM) to [nothing but your application executable][docker-golang-scratch].
 At runtime, they work essentially like any other process, except they're sandboxed so that they can't touch your regular OS files, only the files that are inside the container.
+Unlike a VM, which runs the entire guest OS, with a kernel and many processes, containers usually only run one ora couple of processes at a time.
 
-![Shipping containers](http://www.lighthome.com.au/Images/How%20do%20I/Shipping%20Containers/shipping-containers.jpg)
+![Shipping containers][img-shipping-containers]
 
 The only dependency the container has is on your kernel, which makes them super-portable.
 You can take a container built on any machine, and run it on pretty much any other machine.
-(With caveats, of course - for example, you can't run containers natively on Windows currently, because they're a Linux technology.
+(With caveats, of course - for example, you can't run containers natively on Windows, because of the kernel dependency.
 They're not _that_ magical.)
 
+**Further reading**
+
+[What is Docker?][what-is-docker] Note that this page actually explains what _containers_ are. Docker, as you'll learn in the next section, is a tool for creating and running containers, but the info on this page applies to containerisation technology in general.
+
 [docker-golang-scratch]: http://blog.xebia.com/2014/07/04/create-the-smallest-possible-docker-container/
+[img-shipping-containers]: http://www.lighthome.com.au/Images/How%20do%20I/Shipping%20Containers/shipping-containers.jpg
+[what-is-docker]: https://www.docker.com/whatisdocker
 
 ## Docker
 
@@ -80,13 +89,23 @@ This has a couple of implications:
 
 Docker is basically like the movers who pack items into a container.
 
-![Packing a container](http://www.hiloliving.com/Move/packingupthematsoncontainer.JPG)
+![Packing a container][img-packing-container]
 
 The Docker command-line client gives you all sorts of commands for interacting with both images and containers.
-There is also a rapidly-growing ecysostem around Docker itself, both third-party tools and a growing suite of Docker-branded utilities like Docker Compose, which helps you manage running several containers that together comprise a single 'application' (say, a web app container and a database container).
+There is also a rapidly-growing ecysostem around Docker itself, both third-party tools and a growing suite of Docker-branded utilities like the Docker Hub, which lets you push your container images to a registry and pull them down on a different machine, or like Docker Compose, which helps you manage running several containers that together comprise a single 'application' (say, a web app container and a database container).
 
-However, I've tried to keep my use of the Docker infrastructure to a minimum, and use Docker only for container and image management.
+I've tried to keep my use of the Docker ecosystem to a minimum (mostly just the command-line tool and the hub), and use Docker only for container and image management.
 CoreOS's ecosystem will provide the coordination layers atop this, as I'm about to detail.
+
+**Further reading**
+
+[Docker's "hello world" tutorial][docker-hello-world] is a great place to get started using the Docker command-line tool.
+
+[Rocket][rkt] is another tool, like Docker, for managing containers. The philosophy outlined in this post is why I'm trying to keep my dependence on Docker's ecosystem to a minimum.
+
+[img-packing-container]: http://www.hiloliving.com/Move/packingupthematsoncontainer.JPG
+[docker-hello-world]: https://docs.docker.com/userguide/dockerizing/
+[rkt]: https://coreos.com/blog/rocket/
 
 ## CoreOS
 
@@ -99,14 +118,21 @@ At the moment, this means using Docker, but the CoreOS team is also developing t
 So CoreOS, in the visual metaphor we're developing here, is the boat all the containers are shipped on.
 It provides the kernel, and your containers provide the rest.
 
+**Further reading**
+
+[The CoreOS overview][coreos] is a good place to start reading more about CoreOS.
+
+[DigitalOcean's CoreOS tutorial][do-coreos] is a comprenehsive series about all aspects of CoreOS.
+
+[coreos]: https://coreos.com/using-coreos/
+[do-coreos]: https://www.digitalocean.com/community/tutorial_series/getting-started-with-coreos-2
+
 ## CoreOS components
 
 CoreOS comes with its own set of attendant daemons and tools.
 CoreOS's philosophy is to be modular instead of monolithic, and in theory any of these components could be swapped out - however, they're good defaults, and they're installed on CoreOS by default, so let's consider them essential for now.
 
-Here's where my ship-themed visual aids start to break down, but bear with me a little.
-
-### Fleetd: loading and unloading
+### fleetd: loading and unloading
 
 We need a way to get all these containers on our ships.
 Fleet, which we run on the command-line as `fleetctl`, is a program that lets us distribute 'services' across our CoreOS machines.
@@ -150,27 +176,9 @@ To continue the visual metaphor, `etcd` is the radio, the communication system t
 
 ![On the bridge of a vessel](http://www.travelwithachallenge.com/Images/Travel_Article_Library/Freighter-Travel/Container-Ship-Bridge.jpg)
 
-You may also hear people talk about `confd` in the same breath as `etcd`.
-
-### confd: responding to communication
-
-In the scenario I mentioned above, a new API server coming online, you might want to take some action after this happens - for example, reconfiguring your load balancer to send traffic to the new API server instance.
-`confd` is a principled way of watching `etcd` keys for changes.
-To use it,
-
- * Create a template of your application's configuration file
- * Set `confd` to watch for changes to particular `etcd` keys
- * `confd` will regenerate your config file and restart your application when the keys change
-
-I don't have a picture for `confd` :(.
-
-Something to note is that `confd` actually works with many different bakends, not just `etcd`.
-For example, you could set it up to watch Redis or ZooKeeper.
-
 ## Confused yet?
 
 There's a lot to take in, especially when you're just reading about it.
-Next time, I'll go over a high-level architecture of how I'm going to deploy my own little one-machine cluster, and hopefully this will all become a bit more concrete.
-
+Next time, I'll go over how to deploy a small cluster, and hopefully this will all become a bit more concrete.
 
 ![A fleet of container ships](https://ferrebeekeeper.files.wordpress.com/2012/10/3417930513_392816a872.jpg)
