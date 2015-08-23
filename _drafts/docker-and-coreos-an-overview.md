@@ -70,10 +70,13 @@ They're not _that_ magical.)
 
 **Further reading**
 
+[What are containers and why do you need them?][containers-cio] does a good job at explaining the high-level concept of containers and their differences to VMs.
+
 [What is Docker?][what-is-docker] Note that this page actually explains what _containers_ are. Docker, as you'll learn in the next section, is a tool for creating and running containers, but the info on this page applies to containerisation technology in general.
 
 [docker-golang-scratch]: http://blog.xebia.com/2014/07/04/create-the-smallest-possible-docker-container/
 [img-shipping-containers]: http://www.lighthome.com.au/Images/How%20do%20I/Shipping%20Containers/shipping-containers.jpg
+[containers-cio]: http://www.cio.com/article/2924995/enterprise-software/what-are-containers-and-why-do-you-need-them.html
 [what-is-docker]: https://www.docker.com/whatisdocker
 
 ## Docker
