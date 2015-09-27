@@ -36,7 +36,7 @@ Cabal sandboxes let me do this, by keeping my entire build inside the mounted `/
 This way, next time I spin up a fresh container, I don't have to reinstall.
 
 Note that I _do_ have to run `cabal update` again, if I want to install more libraries in a fresh container.
-This is a slight annoyance, but I usually do it in that foggy minute right after I re-open my source files and try to get my head bask where I left it.
+This is a slight annoyance, but I usually do it in that foggy minute right after I re-open my source files and try to get my head back to where it was yesterday.
 
 ## What about `yesod devel`?
 
@@ -84,18 +84,19 @@ However, even though this does provide an advantage, I still think we should go 
 # Deployment
 
 As I've started to deploy Docker containers others have built, I'm starting to run into many cases of containers, particularly ones packing Go applications, that are based on the `golang` official container.
-I've seen this with Haskell containers, too, and the advice in the previous section (straight from the official readme) certainly suggests that the first line of your application's Dockerfile should be `FROM haskell`.
+I've seen this with Haskell containers, too.
+The advice in the previous section (which I took straight from the official readme) certainly suggests that the first line of your application's Dockerfile should be `FROM haskell`.
 
 I contend that this is bad container etiquette.
 When I go to install your application, I've now just downloaded, in the case of a Haskell application, 700MB.
 This includes an operating system, GHC, its attendant infrastructure, and also your application's source code.
 But your application is actually just a single binary that's probably less than 70MB.
 
-I firmly believe that for deployment containers, you should not be starting with `FROM haskell`, but from `haskell-scratch`.
+I firmly believe that for deployment containers, you should not be starting `FROM haskell`, but `FROM haskell-scratch`.
 [haskell-scratch](https://github.com/snoyberg/haskell-scratch) is a cute little project that lets you create a minimal Docker container with only the shared libraries needed to run Haskell binaries compiled with GHC.
 This means that you can start with a Docker container that's essentially empty and add nothing but your executable to it.
 
-(NB: sometimes, `haskell-scratch` may be _too_ minimal, as [insitu notes](https://www.reddit.com/r/haskell/comments/3crcq7/development_versus_deployment_docker_and_haskell/csyaa4j).
+(NB: sometimes, `haskell-scratch` may be _too_ minimal, as [/u/insitu notes](https://www.reddit.com/r/haskell/comments/3crcq7/development_versus_deployment_docker_and_haskell/csyaa4j).
 You might consider using `busybox` instead.)
 
 The workflow is slightly more complex.
