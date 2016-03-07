@@ -57,3 +57,6 @@ Here are the concrete requirements I settled on for our solution:
  * Allow configuration via environment variables
 
 [12factor]: 
+
+http://harshjv.github.io/blog/laravel-5-with-dockerized-gulp-php-fpm-mysql-and-nginx/
+http://www.spiralout.eu/2015/12/dockervel-laravel-development.html
