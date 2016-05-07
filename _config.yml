@@ -1,4 +1,4 @@
 name: the crab & musket
-highlighter: pygments
+highlighter: rouge
 markdown: kramdown
 permalink: /:year-:month-:day/:title

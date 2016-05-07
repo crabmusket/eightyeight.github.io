@@ -1,4 +1,4 @@
-.highlight pre { background-color: #333}
+.highlight { background-color: #333; color: white; }
 .highlight .language-text { color: #f8f8f2 }
 .highlight .hll { background-color: #49483e }
 .highlight .c { color: #75715e } /* Comment */
