@@ -151,7 +151,7 @@ a:hover {
 /* standard */
 .page pre {
   padding: 0.5rem;
-  overflow-x: auto;
+  white-space: pre-wrap;
 }
 
 .page p code {
@@ -190,6 +190,7 @@ blockquote {
 
 .page img {
   max-width: 100%;
+  box-shadow: 10px 5px 40px #444;
 }
 
 .page iframe {
