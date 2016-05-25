@@ -154,7 +154,7 @@ a:hover {
   white-space: pre-wrap;
 }
 
-.page p code {
+.page code.highlighter-rouge {
   padding: 0 0.2rem;
   border: 1px solid #ddd;
   background-color: #eef;
